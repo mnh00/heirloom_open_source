@@ -1,0 +1,183 @@
+******************************************************************
+*        Copyright (C) 2010-2013 Heirloom Computing Inc          *
+*                                                                *
+*                        ALL RIGHTS RESERVED                     *
+******************************************************************
+*                                                                *
+* Property of Heirloom Computing Inc.  This software contains    *
+* confidential and proprietary information of Heirloom Computing *
+* Inc. and is made available solely pursuant to the terms of a   *
+* software license agreement, which governs its use.             *
+*                                                                *
+* No disclosure, reproduction or use of any portion of these     *
+* materials may be made without the express written consent of   *
+* Heirloom Computing Inc.                                        *
+*                                                                *
+******************************************************************
+*23456789|123456789|123456789|123456789|123456789|123456789|123456789|1 3456789|
+BMSEMNU DFHMSD CTRL=(FREEKB,FRSET),                                    -
+               DATA=FIELD,                                             -
+               EXTATT=NO,                                              -
+               HILIGHT=OFF,                                            -
+               LANG=COBOL,                                             -
+               MODE=INOUT,                                             -
+               OBFMT=NO,                                               -
+               STORAGE=AUTO,                                           -
+               TERM=3270,                                              -
+               TIOAPFX=YES,                                            -
+               TYPE=&&SYSPARM 
+BMSEMNU DFHMDI DATA=FIELD,                                             -
+               HILIGHT=OFF,                                            -
+               OBFMT=NO,                                               -
+               SIZE=(24,80),                                           -
+               TIOAPFX=YES 
+MNUTRN  DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=4,                                               -
+               POS=(1,1),                                              -
+               INITIAL='EMNU' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=22,                                              -
+               POS=(1,19),                                             -
+               INITIAL='HCI ETP - Transaction Tests' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=7,                                               -
+               POS=(1,72),                                             -
+               INITIAL='BMSMNU ' 
+* 03 ESON transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(3,10),                                             -
+               INITIAL='ESON' 
+MNUESON DFHMDF ATTRB=(IC,NORM),                                        -
+               LENGTH=1,                                               -
+               POS=(3,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(3,19),                                             -
+               INITIAL='Security - Sign On'
+* 04 ESOF transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(4,10),                                             -
+               INITIAL='ESOF' 
+MNUESOF DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(4,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(4,19),                                             -
+               INITIAL='Security - Sign Off'
+* 05 EPIC transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(5,10),                                             -
+               INITIAL='EPIC' 
+MNUEPIC DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(5,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(5,19),                                             -
+               INITIAL='Screen PIC Fields'
+* 06 EJNL transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(6,10),                                             -
+               INITIAL='EJNL' 
+MNUEJNL DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(6,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(6,19),                                             -
+               INITIAL='Journal'
+* 07 ETSQ transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(7,10),                                             -
+               INITIAL='ETSQ' 
+MNUETSQ DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(7,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(7,19),                                             -
+               INITIAL='Temporary Storage Queues'
+* 08 ETDQ transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(8,10),                                             -
+               INITIAL='ETDQ' 
+MNUETDQ DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(8,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(8,19),                                             -
+               INITIAL='Transient Data Queues'
+* 09 ELPL transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(9,10),                                             -
+               INITIAL='ELPL' 
+MNUELPL DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(9,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(9,19),                                             -
+               INITIAL='Local Transaction Execution'
+* 10 EDPL transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(10,10),                                            -
+               INITIAL='EDPL' 
+MNUEDPL DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(10,16)
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(10,19),                                            -
+               INITIAL='Remote Transaction Execution'
+* 11 ESQL transaction selection
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(11,10),                                            -
+               INITIAL='ESQL' 
+MNUESQL DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(11,16)
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(11,19),                                            -
+               INITIAL='SQL Execution'
+* 10 Quit
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=4,                                               -
+               POS=(12,10),                                            -
+               INITIAL='Quit' 
+MNUQUIT DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=1,                                               -
+               POS=(12,16) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(12,19),                                            -
+               INITIAL='Exit Session'
+* 22
+MNUMSG DFHMDF ATTRB=(ASKIP,NORM),                                      -
+               LENGTH=79,                                              -
+               POS=(22,1) 
+* 23
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=79,                                              -
+               POS=(23,1),                                             -
+               INITIAL='PF1=ESON   PF2=ESOF   PF3=EPIC   PF4=EJNL   PF5-
+               =ETS-Q' 
+* 24
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=79,                                              -
+               POS=(24,1),                                             -
+               INITIAL='PF6=ETDQ   PF7=ELPL   PF8-EDPL   PF9=EDPL   PF1-
+               2=Quit' 
+        DFHMSD TYPE=FINAL
+        END

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
+
+<!--
+    Setup Parameters:
+    
+    application.display_name				Required
+    application.icon.small
+    application.icon.large
+    application.description
+    
+    application.security_role.@name=@description
+    application.alt_dd					Advanced
+    
+    application.ejb.@			EJB JAR		At least one of these
+    application.connector.@		RAR		is required
+    application.java.@			Client JAR
+    application.web.@=@context_root	Servlet WAR
+    
+-->
+
+<application>
+
+   <icon>
+      <etp><small-icon>${application.icon.small}</small-icon></etp>
+      <etp><large-icon>${application.icon.large}</large-icon></etp>
+   </icon>
+  
+   <display-name><etp>${application.display_name}</etp></display-name>
+  
+   <etp>
+      <description>
+         ${application.description}
+      </description>
+   </etp>
+
+   <etp><module>
+      <connector>${name:application.connector.@}</connector>
+   </module></etp>
+
+   <module>
+      <ejb>ejb_settings.jar</ejb>
+   </module>
+
+   <module>
+      <web>
+         <web-uri>web_settings.war</web-uri>
+         <context-root><etp>${sysid[warn:Context root is SYSID value, which was not defined, using dflt;dflt]}</etp></context-root>
+      </web>
+   </module>
+   
+   <etp><module>
+      <ejb>${name:application.ejb.@}</ejb>
+   </module></etp>
+   
+   <etp><module>
+      <java>${name:application.java.@}</java>
+   </module></etp>
+   
+   <etp><module>
+      <web>
+        <web-uri>${name:application.web.@}</web-uri>
+        <context-root>${value}</context-root>
+      </web>
+   </module></etp>
+
+   <etp>
+      <security-role>
+         <role-name>${name:application.security_role.@}</role-name>
+         <description>${value}</description>
+      </security-role>
+   </etp>  
+</application>

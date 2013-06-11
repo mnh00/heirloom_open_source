@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<html>
+   <head>
+      <title>Elastic Transaction Platform</title>
+      <meta http-equiv="Content-Type"
+         content="text/html; charset=iso-8859-1">
+      <meta http-equiv="PRAGMA" content="NO-CACHE">
+      <meta name="generator" content="Elastic Transaction Platform">
+      <link rel="stylesheet" type="text/css" href="css/etpbms_stylesheet.css">
+      <script type="text/javascript">
+      <!--
+         var termLines=24;
+         var termColumns=80;
+      // -->
+      </script>
+      <script type="text/javascript" src="scripts/etpbms_keymap.js"></script>
+      <script type="text/javascript" src="scripts/etpbms_interaction.js"></script>
+   </head>
+   <body onLoad="focusOnEditableField('&DFH_CURSOR;');">
+      <form name="BMSEMNU" method="POST" action="&DFH_ACTION_URL;">
+         <input type="hidden" name="DFH_CURSOR" value="&DFH_CURSOR;">
+         <div id="screen">
+            <div id="floatfix">
+               <div id="screenimage">
+                  <pre id="MNUTRN" class="line1 col2 norm">&MNUTRN;</pre>
+                  <pre class="line1 col20 norm">HCI ETP - Transaction Tests</pre>
+                  <pre class="line1 col73 norm">BMSMNU </pre>
+                  <pre class="line3 col11 brt">ESON</pre>
+                  <input name="MNUESON" class="mapfield len1 line3 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUESON;">
+                  <pre class="line3 col20 norm">Security - Sign On</pre>
+                  <pre class="line4 col11 brt">ESOF</pre>
+                  <input name="MNUESOF" class="mapfield len1 line4 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUESOF;">
+                  <pre class="line4 col20 norm">Security - Sign Off</pre>
+                  <pre class="line5 col11 brt">EPIC</pre>
+                  <input name="MNUEPIC" class="mapfield len1 line5 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUEPIC;">
+                  <pre class="line5 col20 norm">Screen PIC Fields</pre>
+                  <pre class="line6 col11 brt">EJNL</pre>
+                  <input name="MNUEJNL" class="mapfield len1 line6 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUEJNL;">
+                  <pre class="line6 col20 norm">Journal</pre>
+                  <pre class="line7 col11 brt">ETSQ</pre>
+                  <input name="MNUETSQ" class="mapfield len1 line7 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUETSQ;">
+                  <pre class="line7 col20 norm">Temporary Storage Queues</pre>
+                  <pre class="line8 col11 brt">ETDQ</pre>
+                  <input name="MNUETDQ" class="mapfield len1 line8 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUETDQ;">
+                  <pre class="line8 col20 norm">Transient Data Queues</pre>
+                  <pre class="line9 col11 brt">ELPL</pre>
+                  <input name="MNUELPL" class="mapfield len1 line9 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUELPL;">
+                  <pre class="line9 col20 norm">Local Transaction Execution</pre>
+                  <pre class="line10 col11 brt">EDPL</pre>
+                  <input name="MNUEDPL" class="mapfield len1 line10 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUEDPL;">
+                  <pre class="line10 col20 norm">Remote Transaction Execution</pre>
+                  <pre class="line11 col11 brt">ESQL</pre>
+                  <input name="MNUESQL" class="mapfield len1 line11 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUESQL;">
+                  <pre class="line11 col20 norm">SQL Execution</pre>
+                  <pre class="line12 col11 brt">Quit</pre>
+                  <input name="MNUQUIT" class="mapfield len1 line12 col17 norm" type="text"
+                     size="1" maxlength="1" onFocus="setCurrentField(this)"
+                     value="&MNUQUIT;">
+                  <pre class="line12 col20 norm">Exit Session</pre>
+                  <pre id="MNUMSG" class="line22 col2 norm">&MNUMSG;                                                                               </pre>
+                  <pre class="line23 col2 norm">PF1=ESON   PF2=ESOF   PF3=EPIC   PF4=EJNL   PF5=ETS-Q</pre>
+                  <pre class="line24 col2 norm">PF6=ETDQ   PF7=ELPL   PF8-EDPL   PF9=EDPL   PF12=Quit</pre>
+               </div>
+            </div>
+            <div id="floatfix">
+               <div id="buttonpanel">
+                  <input class="pkey f1" type="submit" name="DFH_PF1" value="PF1">
+                  <input class="pkey f2" type="submit" name="DFH_PF2" value="PF2">
+                  <input class="pkey f3" type="submit" name="DFH_PF3" value="PF3">
+                  <input class="pkey f4" type="submit" name="DFH_PF4" value="PF4">
+                  <input class="pkey f5" type="submit" name="DFH_PF5" value="PF5">
+                  <input class="pkey f6" type="submit" name="DFH_PF6" value="PF6">
+                  <input class="pkey f7" type="submit" name="DFH_PF7" value="PF7">
+                  <input class="pkey f8" type="submit" name="DFH_PF8" value="PF8">
+                  <input class="pkey f9" type="submit" name="DFH_PF9" value="PF9">
+                  <input class="pkey f10" type="submit" name="DFH_PF10" value="PF10">
+                  <input class="pkey f11" type="submit" name="DFH_PF11" value="PF11">
+                  <input class="pkey f12" type="submit" name="DFH_PF12" value="PF12">
+                  <input class="pkey f13" type="submit" name="DFH_PF13" value="PF13">
+                  <input class="pkey f14" type="submit" name="DFH_PF14" value="PF14">
+                  <input class="pkey f15" type="submit" name="DFH_PF15" value="PF15">
+                  <input class="pkey f16" type="submit" name="DFH_PF16" value="PF16">
+                  <input class="pkey f17" type="submit" name="DFH_PF17" value="PF17">
+                  <input class="pkey f18" type="submit" name="DFH_PF18" value="PF18">
+                  <input class="pkey f19" type="submit" name="DFH_PF19" value="PF19">
+                  <input class="pkey f20" type="submit" name="DFH_PF20" value="PF20">
+                  <input class="pkey f21" type="submit" name="DFH_PF21" value="PF21">
+                  <input class="pkey f22" type="submit" name="DFH_PF22" value="PF22">
+                  <input class="pkey f23" type="submit" name="DFH_PF23" value="PF23">
+                  <input class="pkey f24" type="submit" name="DFH_PF24" value="PF24">
+                  <input class="pkey a1" type="submit" name="DFH_PA1" value="PA1">
+                  <input class="pkey a2" type="submit" name="DFH_PA2" value="PA2">
+                  <input class="pkey a3" type="submit" name="DFH_PA3" value="PA3">
+                  <input class="clearkey" type="submit" name="DFH_CLEAR" value="Clear">
+                  <input class="resetkey" type="reset" value="Reset">
+                  <input class="enterkey" type="submit" name="DFH_ENTER" value="Enter">
+               </div>
+            </div>
+         </div>
+      </form>
+   </body>
+</html>
+

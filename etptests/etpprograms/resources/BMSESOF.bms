@@ -1,0 +1,106 @@
+******************************************************************
+*        Copyright (C) 2010-2013 Heirloom Computing Inc          *
+*                                                                *
+*                        ALL RIGHTS RESERVED                     *
+******************************************************************
+*                                                                *
+* Property of Heirloom Computing Inc.  This software contains    *
+* confidential and proprietary information of Heirloom Computing *
+* Inc. and is made available solely pursuant to the terms of a   *
+* software license agreement, which governs its use.             *
+*                                                                *
+* No disclosure, reproduction or use of any portion of these     *
+* materials may be made without the express written consent of   *
+* Heirloom Computing Inc.                                        *
+*                                                                *
+******************************************************************
+*23456789|123456789|123456789|123456789|123456789|123456789|123456789|1 3456789|
+BMSESOF DFHMSD CTRL=(FREEKB,FRSET),                                    -
+               DATA=FIELD,                                             -
+               EXTATT=NO,                                              -
+               HILIGHT=OFF,                                            -
+               LANG=COBOL,                                             -
+               MODE=INOUT,                                             -
+               OBFMT=NO,                                               -
+               STORAGE=AUTO,                                           -
+               TERM=3270,                                              -
+               TIOAPFX=YES,                                            -
+               TYPE=&&SYSPARM 
+BMSESOF DFHMDI DATA=FIELD,                                             -
+               HILIGHT=OFF,                                            -
+               OBFMT=NO,                                               -
+               SIZE=(24,80),                                           -
+               TIOAPFX=YES 
+ESOFTRN DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=4,                                               -
+               POS=(1,1),                                              -
+               INITIAL='ESOF' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=22,                                              -
+               POS=(1,29),                                             -
+               INITIAL='HCI ETP - Sign Off' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=7,                                               -
+               POS=(1,72),                                             -
+               INITIAL='BMSESOF' 
+* 05 HCI ETP banner
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(5,3),                                              -
+               INITIAL=' **      **      ******     **         ********-
+                   **********    ******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(6,3),                                              -
+               INITIAL='/**     /**     **////**   /**        /**///// -
+                  /////**///    /**////**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(7,3),                                              -
+               INITIAL='/**     /**    **    //    /**        /**      -
+                      /**       /**   /**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(8,3),                                              -
+               INITIAL='/**********   /**          /**        /******* -
+                      /**       /******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(9,3),                                              -
+               INITIAL='/**//////**   /**          /**        /**////  -
+                      /**       /**////  '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(10,3),                                             -
+               INITIAL='/**     /**   //**    **   /**        /**      -
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(11,3),                                             -
+               INITIAL='/**     /**    //******    /**        /********-
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(12,3),                                             -
+               INITIAL='//      //      //////     //         //////// -
+                      //        //       '
+* 14 Confirm
+        DFHMDF ATTRB=(BRT),                                            -
+               LENGTH=13,                                              -
+               POS=(14,10),                                            -
+               INITIAL='Confirm:' 
+ESOFCFM DFHMDF ATTRB=(IC,NORM),                                        -
+               LENGTH=1,                                               -
+               POS=(14,27) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=13,                                              -
+               POS=(14,29),                                            -
+               INITIAL='(Enter X to confirm to sign off)' 
+* 20 setup
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(20,1),                                             -
+               INITIAL='Setup:  Configure JEE app server with JAAS secu-
+               it manager, domain ETP, resource USER'
+* 23
+ESOFMSG DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=79,                                              -
+               POS=(23,1) 
+* 24
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=44,                                              -
+               POS=(24,1),                                             -
+               INITIAL='Enter=Sign Off  PF3=Return to Menu  PF12=Quit' 
+        DFHMSD TYPE=FINAL
+        END

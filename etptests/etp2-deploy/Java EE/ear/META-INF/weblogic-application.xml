@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE weblogic-application PUBLIC "-//BEA Systems, Inc.//DTD WebLogic Application 7.0.0//EN" "http://www.bea.com/servers/wls700/dtd/weblogic-application_1_0.dtd">
+
+<!--
+  weblogic.application.start_msbs_with_application=true|false
+-->
+
+<weblogic-application>
+ 
+   <etp>
+      <ejb>
+         <etp>
+            <entity-cache>
+               <etp>
+                  <entity-cache-name>
+                     ${name:weblogic.application.entity_cache.@}
+                  </entity-cache-name>
+                  <etp>
+                     <max-beans-in-cache>
+                        ${weblogic.application.entity_cache.@.max_beans_in_cache}
+                     </max-beans-in-cache>
+                  </etp>
+                  <etp>
+                     <max-cache-size>
+                        <bytes>
+                           ${weblogic.application.entity_cache.@.max_cache_size}
+                        </bytes>
+                     </max-cache-size>
+                  </etp>
+                  <etp>
+                     <caching-strategy>
+                        ${weblogic.application.entity_cache.@.caching_strategy}
+                    </caching-strategy>
+                  </etp>
+               </etp>
+            </entity-cache>
+         </etp>
+         <etp>
+            <start-mdbs-with-application>
+               ${weblogic.application.start_mdbs_with_application}
+            </start-mdbs-with-application>
+         </etp>
+      </ejb>
+   </etp>
+  
+   <xml>
+      <parser-factory>
+         <etp>
+            <saxparser-factory>
+               ${weblogic.application.saxparser_factory}
+            </saxparser-factory>
+         </etp>
+         <etp>
+            <document-builder-factory>
+               ${weblogic.application.document_build_factory}
+            </document-builder-factory>
+         </etp>
+         <etp>
+            <transformer-factory>
+               ${weblogic.application.transformer_factory}
+            </transformer-factory>
+         </etp>
+      </parser-factory>
+      <etp>
+         <entity-mapping>
+            <entity-mapping-name>
+               ${name:weblogic.application.xml.entity_mapping.@}
+            </entity-mapping-name>
+            <etp>
+               <public-id>
+                  ${weblogic.application.xml.entity_mapping.@.public_id}
+               </public-id>
+            </etp>
+            <etp>
+               <system-id>
+                  ${weblogic.application.xml.entity_mapping.@.system_id}
+               </system-id>
+            </etp>
+            <etp>
+               <entity-uri>
+                  ${weblogic.application.xml.entity_mapping.@.entity_uri}
+               </entity-uri>
+            </etp>
+            <etp>
+               <when-to-cache>
+                  ${weblogic.application.xml.entity_mapping.@.when_to_cache}
+               </when-to-cache>
+            </etp>
+            <etp>
+               <cache-timeout-interval>
+                  ${weblogic.application.xml.entity_mapping.@.cache_timeout_interval}
+               </cache-timeout-interval>
+            </etp>
+         </entity-mapping>
+      </etp>
+   </xml>
+ 
+   <etp>
+      <security>
+         <realm-name>
+            ${weblogic.application.security.realm_name}
+         </realm-name>
+      </security>
+   </etp>
+  
+   <etp>
+      <application-param>
+         <param-name>
+            ${name:weblogic.application.application_param.@}
+         </param-name>
+         <param-value>
+            ${value}
+         </param-value>
+         <etp>
+            <description>
+               ${weblogic.application.application_param.@.description}
+            </description>
+         </etp>
+      </application-param>
+   </etp>
+ 
+</weblogic-application>
+

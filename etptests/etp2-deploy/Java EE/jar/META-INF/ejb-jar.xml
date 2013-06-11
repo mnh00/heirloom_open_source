@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Enterprise JavaBeans 2.0//EN" "http://java.sun.com/dtd/ejb-jar_2_0.dtd">
+
+<ejb-jar>
+   <etp><description>${application.description}</description></etp>
+   <etp><display-name>${application.display_name}</display-name></etp>
+   <etp><small-icon>${application.icon.small_icon}</small-icon></etp>
+   <etp><large-icon>${application.icon.large_icon}</large-icon></etp>
+
+   <enterprise-beans>
+      <etp><session>
+            <ejb-name>ETPSYSL_${sysid[warn:EJB dispatching session bean is ETPSYSL_SYSID, but SYSID not defined, so using ETPSYSL_dflt;dflt]}</ejb-name>
+            <home>com.heirloomcomputing.etp.transaction.env.ejb.LinkDispatcherHome</home>
+            <remote>com.heirloomcomputing.etp.transaction.env.ejb.LinkDispatcher</remote>
+            <local-home>com.heirloomcomputing.etp.transaction.env.ejb.LinkDispatcherLocalHome</local-home>
+            <local>com.heirloomcomputing.etp.transaction.env.ejb.LinkDispatcherLocal</local>
+            <ejb-class>com.heirloomcomputing.etp.transaction.env.ejb.LinkDispatcherEJB</ejb-class>
+            <session-type>Stateful</session-type>
+            <transaction-type>Bean</transaction-type>
+    
+      <etp><env-entry>
+            <env-entry-name>${name:@}</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+   	        <env-entry-value>${value}</env-entry-value>
+      </env-entry></etp>
+      </session></etp>
+      <etp><message-driven>
+            <!-- system queue requires ${jms.default.factory} -->
+            <ejb-name>ETPSYSQ_${sysid}</ejb-name>
+            <ejb-class>com.heirloomcomputing.etp.transaction.env.ejb.LinkMessage</ejb-class>
+            <transaction-type>Bean</transaction-type>
+            <acknowledge-mode>Auto-acknowledge</acknowledge-mode>
+            <message-driven-destination>
+               <destination-type>javax.jms.Queue</destination-type>
+            </message-driven-destination>
+    
+      <etp><env-entry>
+            <env-entry-name>${name:@}</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+   	        <env-entry-value>${value}</env-entry-value>
+      </env-entry></etp>
+      </message-driven></etp>
+   </enterprise-beans>
+
+   <assembly-descriptor>
+      <etp><security-role>
+            <description>${value}</description>
+            <role-name>${name:application.security_role.@}</role-name>
+      </security-role></etp>
+   </assembly-descriptor>
+</ejb-jar>

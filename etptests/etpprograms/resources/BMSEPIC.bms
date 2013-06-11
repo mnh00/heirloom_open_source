@@ -1,0 +1,118 @@
+******************************************************************
+*        Copyright (C) 2010-2013 Heirloom Computing Inc          *
+*                                                                *
+*                        ALL RIGHTS RESERVED                     *
+******************************************************************
+*                                                                *
+* Property of Heirloom Computing Inc.  This software contains    *
+* confidential and proprietary information of Heirloom Computing *
+* Inc. and is made available solely pursuant to the terms of a   *
+* software license agreement, which governs its use.             *
+*                                                                *
+* No disclosure, reproduction or use of any portion of these     *
+* materials may be made without the express written consent of   *
+* Heirloom Computing Inc.                                        *
+*                                                                *
+******************************************************************
+*23456789|123456789|123456789|123456789|123456789|123456789|123456789|1 3456789|
+BMSEPIC DFHMSD CTRL=(FREEKB,FRSET),                                    -
+               DATA=FIELD,                                             -
+               EXTATT=NO,                                              -
+               HILIGHT=OFF,                                            -
+               LANG=COBOL,                                             -
+               MODE=INOUT,                                             -
+               OBFMT=NO,                                               -
+               STORAGE=AUTO,                                           -
+               TERM=3270,                                              -
+               TIOAPFX=YES,                                            -
+               TYPE=&&SYSPARM 
+BMSEPIC DFHMDI DATA=FIELD,                                             -
+               HILIGHT=OFF,                                            -
+               OBFMT=NO,                                               -
+               SIZE=(24,80),                                           -
+               TIOAPFX=YES 
+EPICTRN DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=4,                                               -
+               POS=(1,1),                                              -
+               INITIAL='EPIC' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=25,                                              -
+               POS=(1,26),                                             -
+               INITIAL='HCI ETP - BMS Test Screen' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=7,                                               -
+               POS=(1,72),                                             -
+               INITIAL='BMSEPIC' 
+* 05 HCI ETP banner
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(5,3),                                              -
+               INITIAL=' **      **      ******     **         ********-
+                   **********    ******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(6,3),                                              -
+               INITIAL='/**     /**     **////**   /**        /**///// -
+                  /////**///    /**////**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(7,3),                                              -
+               INITIAL='/**     /**    **    //    /**        /**      -
+                      /**       /**   /**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(8,3),                                              -
+               INITIAL='/**********   /**          /**        /******* -
+                      /**       /******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(9,3),                                              -
+               INITIAL='/**//////**   /**          /**        /**////  -
+                      /**       /**////  '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(10,3),                                             -
+               INITIAL='/**     /**   //**    **   /**        /**      -
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(11,3),                                             -
+               INITIAL='/**     /**    //******    /**        /********-
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(12,3),                                             -
+               INITIAL='//      //      //////     //         //////// -
+                      //        //       '
+* 14 COBOL PIC test ZZZZ9
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=13,                                              -
+               POS=(14,10),                                            -
+               INITIAL='ZZZZZ9 Test:' 
+EPICZZ9 DFHMDF ATTRB=(IC,NORM),                                        -
+               LENGTH=5,                                               -
+               COLOR=RED,                                              -
+               PICOUT='ZZZZ9',                                         -
+               POS=(14,27) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=13,                                              -
+               POS=(14,39),                                            -
+               INITIAL='(COBOL PIC ZZZZ9)' 
+* 15 COBOL PIC test $999.99
+        DFHMDF ATTRB=(ASKIP,BRT),                                      -
+               LENGTH=13,                                              -
+               POS=(15,10),                                            -
+               INITIAL='$999.99 Test:' 
+EPIC$99 DFHMDF ATTRB=(IC,NORM),                                        -
+               LENGTH=10,                                              -
+               COLOR=TURQUOISE,                                        -
+               PICIN='99999999V99',                                    -
+               PICOUT='$$$,$$9.99',                                    -
+               POS=(15,27) 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=22,                                              -
+               POS=(15,39),                                            -
+               INITIAL='(COBOL PIC $$$,$$9.99)' 
+* 23
+EPICMSG DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=79,                                              -
+               POS=(23,1) 
+* 24
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=45,                                              -
+               POS=(24,1),                                             -
+               INITIAL='Enter=Echo Data  PF3=Return to Menu  PF12=Quit' 
+        DFHMSD TYPE=FINAL
+        END

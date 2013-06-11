@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<!DOCTYPE jboss-app PUBLIC "-//JBoss//DTD J2EE Application 1.3V2//EN" "http://www.jboss.org/j2ee/dtd/jboss-app_3_2.dtd">
+
+<!--
+    Setup Parameters:					Example
+	jboss_app.loader_repository=value   jboss_app.loader_repository=jboss.test:loader=cts-cmp2v1-sar.ear
+	jboss_app.service.name				jboss_app.service.nameexternal.sar
+-->
+
+<jboss-app>
+  <etp>
+    <loader-repository>
+      ${jboss_app.loader_repository}
+    </loader-repository>
+  </etp>
+  
+  <etp>
+    <module>
+      <service>${name:jboss_app.service.@}</service>
+    </module>
+  </etp>
+</jboss-app>

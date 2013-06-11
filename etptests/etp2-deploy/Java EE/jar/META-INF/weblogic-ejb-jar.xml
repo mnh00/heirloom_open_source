@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE weblogic-ejb-jar PUBLIC "-//BEA Systems, Inc.//DTD WebLogic 6.0.0 EJB//EN" "http://www.bea.com/servers/wls600/dtd/weblogic-ejb-jar.dtd">
+
+<weblogic-ejb-jar>
+   <etp>
+      <description>
+         ${ejb.description}
+      </description>
+   </etp>
+
+   <etp>
+      <weblogic-enterprise-bean>
+         <ejb-name>ETPSYSL_${sysid}</ejb-name>
+         <jndi-name>ETPSYSL_${sysid}</jndi-name>
+      </weblogic-enterprise-bean>
+   </etp>
+ 
+   <etp>
+      <weblogic-enterprise-bean>
+
+         <ejb-name>ETPSYSQ_${sysid}</ejb-name>
+  
+         <message-driven-descriptor>
+            <destination-jndi-name>ETPSYSQ_${sysid}</destination-jndi-name>
+            <connection-factory-jndi-name>${jms.default.factory}</connection-factory-jndi-name>
+         </message-driven-descriptor>
+
+      </weblogic-enterprise-bean>
+   </etp>
+   
+</weblogic-ejb-jar>

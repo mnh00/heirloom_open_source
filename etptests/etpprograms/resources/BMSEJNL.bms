@@ -1,0 +1,126 @@
+******************************************************************
+*        Copyright (C) 2010-2013 Heirloom Computing Inc          *
+*                                                                *
+*                        ALL RIGHTS RESERVED                     *
+******************************************************************
+*                                                                *
+* Property of Heirloom Computing Inc.  This software contains    *
+* confidential and proprietary information of Heirloom Computing *
+* Inc. and is made available solely pursuant to the terms of a   *
+* software license agreement, which governs its use.             *
+*                                                                *
+* No disclosure, reproduction or use of any portion of these     *
+* materials may be made without the express written consent of   *
+* Heirloom Computing Inc.                                        *
+*                                                                *
+******************************************************************
+*23456789|123456789|123456789|123456789|123456789|123456789|123456789|1 3456789|
+BMSEJNL DFHMSD CTRL=(FREEKB,FRSET),                                    -
+               DATA=FIELD,                                             -
+               EXTATT=NO,                                              -
+               HILIGHT=OFF,                                            -
+               LANG=COBOL,                                             -
+               MODE=INOUT,                                             -
+               OBFMT=NO,                                               -
+               STORAGE=AUTO,                                           -
+               TERM=3270,                                              -
+               TIOAPFX=YES,                                            -
+               TYPE=&&SYSPARM 
+BMSEJNL DFHMDI DATA=FIELD,                                             -
+               HILIGHT=OFF,                                            -
+               OBFMT=NO,                                               -
+               SIZE=(24,80),                                           -
+               TIOAPFX=YES 
+EJNLTRN DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=4,                                               -
+               POS=(1,1),                                              -
+               INITIAL='EJNL' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=22,                                              -
+               POS=(1,22),                                             -
+               INITIAL='HCI ETP - Journal Write' 
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=7,                                               -
+               POS=(1,72),                                             -
+               INITIAL='BMSEJNL' 
+* 05 HCI ETP banner
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(5,3),                                              -
+               INITIAL=' **      **      ******     **         ********-
+                   **********    ******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(6,3),                                              -
+               INITIAL='/**     /**     **////**   /**        /**///// -
+                  /////**///    /**////**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(7,3),                                              -
+               INITIAL='/**     /**    **    //    /**        /**      -
+                      /**       /**   /**'
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(8,3),                                              -
+               INITIAL='/**********   /**          /**        /******* -
+                      /**       /******* '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(9,3),                                              -
+               INITIAL='/**//////**   /**          /**        /**////  -
+                      /**       /**////  '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(10,3),                                             -
+               INITIAL='/**     /**   //**    **   /**        /**      -
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(11,3),                                             -
+               INITIAL='/**     /**    //******    /**        /********-
+                      /**       /**      '
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(12,3),                                             -
+               INITIAL='//      //      //////     //         //////// -
+                      //        //       '
+* 15 Write to journal1
+        DFHMDF ATTRB=(BRT),                                            -
+               LENGTH=13,                                              -
+               POS=(15,10),                                            -
+               INITIAL='journal1:' 
+EJNL1   DFHMDF ATTRB=(IC,NORM),                                        -
+               LENGTH=40,                                              -
+               POS=(15,27) 
+* 16 Write to journal2
+        DFHMDF ATTRB=(BRT),                                            -
+               LENGTH=13,                                              -
+               POS=(16,10),                                            -
+               INITIAL='journal2:' 
+EJNL2   DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=40,                                              -
+               POS=(16,27) 
+* 17 Write to journal2
+        DFHMDF ATTRB=(BRT),                                            -
+               LENGTH=13,                                              -
+               POS=(17,10),                                            -
+               INITIAL='journal3:' 
+EJNL3   DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=40,                                              -
+               POS=(17,27) 
+* 18 Write to journal2
+        DFHMDF ATTRB=(BRT),                                            -
+               LENGTH=13,                                              -
+               POS=(18,10),                                            -
+               INITIAL='journal4:' 
+EJNL4   DFHMDF ATTRB=(NORM),                                           -
+               LENGTH=40,                                              -
+               POS=(18,27) 
+* 20 setup
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               POS=(20,1),                                             -
+               INITIAL='Setup:  Define journal1..4 in ETP Deployment Se-
+               ttings as SYSIN, SYSOUT, Log4J, Text File'
+* 23
+EJNLMSG DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=79,                                              -
+               POS=(23,1) 
+* 24
+        DFHMDF ATTRB=(ASKIP,NORM),                                     -
+               LENGTH=44,                                              -
+               POS=(24,1),                                             -
+               INITIAL='Enter=Journal  PF3=Return to Menu  PF12=Quit' 
+        DFHMSD TYPE=FINAL
+        END

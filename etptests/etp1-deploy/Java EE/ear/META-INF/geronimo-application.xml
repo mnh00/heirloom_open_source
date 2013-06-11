@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+      ******************************************************************
+      *        Copyright (C) 2010-2013 Heirloom Computing Inc          *
+      *                                                                *
+      ******************************************************************
+
+      Place Geronimo specific deployment details here.  for example,
+      change the dep:version to your program version or remove it 
+      to have Geronimo generate a unique version number for each
+      deployment.
+
+-->
+<etp>
+<app:application
+  xmlns:conn="http://geronimo.apache.org/xml/ns/j2ee/connector-1.2"
+  xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2"
+  xmlns:app="http://geronimo.apache.org/xml/ns/j2ee/application-2.0"
+  application-name="${application.display_name}">
+
+    <dep:environment>
+
+        <dep:moduleId>
+            <dep:groupId>default</dep:groupId>
+            <dep:artifactId>${application.display_name}</dep:artifactId>
+            <dep:version>1.1</dep:version>
+            <dep:type>ear</dep:type>
+        </dep:moduleId>
+
+        <dep:dependencies />
+
+    </dep:environment>
+
+</app:application>
+</etp>

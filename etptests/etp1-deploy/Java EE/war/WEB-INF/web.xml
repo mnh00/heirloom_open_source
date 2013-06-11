@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" "http://java.sun.com/dtd/web-app_2_3.dtd">
+
+<web-app>
+   <icon>
+      <ltp>
+      <small-icon>${application.icon.small_icon}</small-icon>
+      </ltp>
+      <ltp>
+      <large-icon>${application.icon.large_icon}</large-icon>
+      </ltp>
+   </icon>
+
+   <ltp>
+   <display-name>${application.display_name}</display-name>
+   </ltp>
+ 
+   <ltp>
+   <description>${application.description}</description>
+   </ltp>
+
+   <ltp>
+   <distributable>
+   <!--
+      ${application.distributable}
+      This servlet is distributable by having this tag.
+    -->
+   </distributable>
+   </ltp>
+ 
+   <ltp>
+   <context-param>
+      <param-name>${name:web.context_param.value.@}</param-name>
+      <param-value>${value}</param-value>
+      <ltp>
+         <description>${web.context_param.description.@}</description>
+      </ltp>
+   </context-param>
+   </ltp>
+
+   <ltp>
+   <listener>
+      <listener-class>${name:web.listener.listener_class.@}</listener-class>
+   </listener>
+   </ltp> 
+ 
+   <servlet>
+      <icon>
+         <ltp>
+         <small-icon>${web.icon.small_icon}</small-icon>
+         </ltp>
+         <ltp>
+         <large-icon>${web.icon.large_icon}</large-icon>
+         </ltp>
+      </icon>
+   
+      <servlet-name>
+         <ltp>${web.servlet.name[info:web.servlet.name not set (see Servlet Name field in J2EE Servlet category), defaulting to servlet;servlet]}</ltp>
+      </servlet-name>
+   
+      <ltp><display-name>${web.servlet.display_name}</display-name></ltp>
+   
+      <ltp><description>${web.servlet.description}</description></ltp>
+   
+      <servlet-class>com.heirloomcomputing.etp.transaction.presentation.HTMLServlet</servlet-class>
+   
+      <ltp><init-param>
+         <param-name>${name:@}</param-name>
+         <param-value>${value}</param-value>
+      </init-param></ltp>
+  
+      <ltp><load-on-startup>${web.servlet.load_on_startup}</load-on-startup></ltp>
+   
+      <ltp>
+      <run-as>
+         <ltp><description>${web.servlet.run_as.description}</description></ltp>
+         <role-name>${web.servet.run_as.role_name}</role-name>
+      </run-as>
+      </ltp>
+  
+      <ltp>
+      <security-role-ref>
+         <ltp><description>${web.security_role_ref.description}</description></ltp>
+         <role-name>${web.security_role_ref.role_name}</role-name>
+         <ltp><role-link>${web.security_role_ref.role_link}</role-link></ltp>
+      </security-role-ref>
+      </ltp>
+   </servlet>
+ 
+   <ltp><servlet-mapping>
+      <servlet-name>${web.servlet.name[info:web.servlet.name not set (see Servlet Name field in J2EE Servlet category), defaulting to servlet;servlet]}</servlet-name>
+      <url-pattern>${web.servlet_mapping.url_pattern[info:web.servlet_mapping.url_pattern not set (see URL Pattern field in J2EE Servlet category), default to /servlet;/servlet]}</url-pattern>
+   </servlet-mapping></ltp>
+ 
+   <ltp><session-config>
+      <session-timeout>${web.session_config.session_timeout}</session-timeout>
+   </session-config></ltp>
+
+   <ltp><mime-mapping>
+      <extension>${name:web.mime_mapping.extension.@}</extension>
+      <mime-type>${value}</mime-type>
+   </mime-mapping></ltp>
+ 
+   <ltp><resource-env-ref>
+      <ltp><description>${web.resource_env_ref.@.description}</description></ltp>
+      <resource-env-ref-name>${name:web.resource_env_ref.@}</resource-env-ref-name>
+      <resource-env-ref-type>${value}</resource-env-ref-type>
+   </resource-env-ref></ltp>
+ 
+   <ltp><resource-ref>
+      <ltp><description>${web.resource_ref.@.description}</description></ltp>
+      <res-ref-name>${name:web.resource_ref.@}</res-ref-name>
+      <res-type>${web.resource_ref.@.type}</res-type>
+      <res-auth>${web.resource_ref.@.auth}</res-auth>
+      <ltp><res-sharing-scope>${web.resource_ref.@.sharing_scope}</res-sharing-scope></ltp>
+   </resource-ref></ltp>
+
+   <login-config>
+      <ltp><auth-method>${web.login_config.auth_method}</auth-method></ltp>
+      <ltp><realm-name>${web.login_config.realm_name}</realm-name></ltp>
+      <ltp><form-login-config>
+         <form-login-page>${web.login_config.form_login_config.login_page}</form-login-page>
+         <form-error-page>${web.login_config.form_login_config.error_page}</form-error-page>
+      </form-login-config></ltp>
+   </login-config>
+
+   <ltp>
+      <security-role>
+         <role-name>${name:application.security_role.@}</role-name>
+         <description>${value}</description>
+      </security-role>
+   </ltp>  
+</web-app>

@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<!DOCTYPE jboss PUBLIC "-//JBoss//DTD JBOSS 3.2//EN" "http://www.jboss.org/j2ee/dtd/jboss_3_2.dtd">
+
+<jboss>
+  <enterprise-beans>
+    <etp>
+      <session>
+         <ejb-name>ETPSYSL_${sysid}</ejb-name>
+         <jndi-name>ETPSYSL_${sysid}</jndi-name>
+      </session>
+    </etp>
+    <etp>
+      <!-- system queue requires ${jms.default.factory} -->
+      <message-driven>
+        <ejb-name>ETPSYSQ_${sysid}</ejb-name>
+        <destination-jndi-name>ETPSYSQ_${sysid}</destination-jndi-name>
+      </message-driven>
+	</etp>
+  </enterprise-beans>
+</jboss>
