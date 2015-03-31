@@ -1,0 +1,530 @@
+*** stunnel-5.14/src/prototypes.h	2015-03-25 06:10:58.000000000 -0700
+--- stunnel-5.14-mnh/src/prototypes.h	2015-03-31 11:57:16.439287528 -0700
+***************
+*** 150,155 ****
+--- 150,156 ----
+          unsigned taskbar:1;                       /* enable the taskbar icon */
+  #else /* !USE_WIN32 */
+          unsigned foreground:1;
++         unsigned int stats:1;            /* mnh: generate statistics */
+          unsigned syslog:1;
+  #endif
+  #ifdef USE_FIPS
+***************
+*** 267,272 ****
+--- 268,274 ----
+          unsigned accept:1;              /* endpoint: accept */
+          unsigned client:1;
+          unsigned delayed_lookup:1;
++         unsigned int httpproxyheaders:1; /* mnh: generate proxy headers */
+  #ifdef USE_LIBWRAP
+          unsigned libwrap:1;
+  #endif
+***************
+*** 390,395 ****
+--- 392,410 ----
+      uint64_t sock_bytes, ssl_bytes; /* bytes written to socket and SSL */
+      s_poll_set *fds; /* file descriptors */
+      uintptr_t redirect; /* redirect to another destination after failed auth */
++     /** mnh - stats and httpproxyheaders **/
++     unsigned long buffsize;  /* current buffer size, may be lower than BUFFSIZE */
++     int crlf_seen; /* the number of successive CRLF seen */
++     /* collect_stats */
++     int stats_last;
++     time_t stats_last_time;
++     struct timeval stats_readtime;
++     struct timeval stats_writetime;
++     int stats_readcount;
++     int stats_readops;
++     int stats_writecount;
++     int stats_writeops;
++     int stats_responsetime;
+  } CLI;
+  
+  /**************************************** prototypes for stunnel.c */
+*** stunnel-5.14/src/client.c	2015-03-25 06:10:58.000000000 -0700
+--- stunnel-5.14-mnh/src/client.c	2015-03-31 12:04:08.167274637 -0700
+***************
+*** 72,83 ****
+--- 72,113 ----
+  
+      c=str_alloc_detached(sizeof(CLI));
+      c->opt=opt;
++     /** mnh - stats and httpproxyheaders **/
++     /* some options need space to add some information */
++     if (c->opt->option.httpproxyheaders)
++         c->buffsize = BUFFSIZE - BUFF_RESERVED;
++     else
++         c->buffsize = BUFFSIZE;
++     c->crlf_seen=0;
+      c->local_rfd.fd=rfd;
+      c->local_wfd.fd=wfd;
+      c->redirect=REDIRECT_OFF;
+      return c;
+  }
+  
++ /** mnh - stats, httpproxyheaders **/
++ /* Moves all data from the buffer <buffer> between positions <start> and <stop>
++  * to insert <string> of length <len>. <start> and <stop> are updated to their
++  * new respective values, and the number of characters inserted is returned.
++  * If <len> is too long, nothing is done and -1 is returned.
++  * Note that neither <string> nor <buffer> can be NULL.
++  */
++ static long buffer_insert_with_len(char *buffer, long unsigned *start, long unsigned *stop, long unsigned limit, char *string, long unsigned len) {
++     if (len > limit - *stop)
++         return -1;
++     if (*start > *stop)
++         return -1;
++     memmove(buffer + *start + len, buffer + *start, (size_t)(*stop - *start));
++     memcpy(buffer + *start, string, (size_t)len);
++     *start += len;
++     *stop += len;
++     return (long) len;
++ }
++ 
++ static long buffer_insert(char *buffer, long unsigned *start, long unsigned *stop, long unsigned limit, char *string) {
++     return buffer_insert_with_len(buffer, start, stop, limit, string, (long unsigned) strlen(string));
++ }
++ 
+  void *client_thread(void *arg) {
+      CLI *c=arg;
+  
+***************
+*** 131,136 ****
+--- 161,240 ----
+      str_free(c);
+  }
+  
++ /** mnh -  collect stats **/
++ static void collect_stats(CLI *c, int count, int statsoperation) {
++     /* log important packet and response time statistics that are not
++     * verbose and can be post-processed by a log-reading program
++     * and big-data amalgomation tool
++     */
++     if(!global_options.option.stats) /* stats are not enabled */
++         return;
++     switch (statsoperation) {
++ #define STATS_INIT 11
++     case STATS_INIT:
++         /* initialize the stats engine */
++         c->stats_last_time = time(NULL);
++         c->stats_readtime.tv_sec = 0;
++         c->stats_readtime.tv_usec = 0;
++         c->stats_readcount = 0;
++         c->stats_readops = 0;
++         c->stats_writetime.tv_sec = 0;
++         c->stats_writetime.tv_usec = 0;
++         c->stats_writecount = 0;
++         c->stats_writeops = 0;
++         c->stats_responsetime = 0;
++         break;
++ #define STATS_FINISH 12
++     case STATS_FINISH:
++         /* report only non-zero stats at the current log level */
++         if (c->stats_readops != 0 && c->stats_writeops != 0 &&
++             c->stats_readcount != 0 && c->stats_writecount != 0 &&
++             c->stats_responsetime != 0) {
++             c->stats_last_time = time(NULL);
++             s_log(service_options.log_level, "STATS > %d # < %d # > %d b < %d b >< %d usec",
++                 c->stats_readops, c->stats_writeops, c->stats_readcount,
++                 c->stats_writecount, c->stats_responsetime);
++         }
++         break;
++ #define STATS_READ 13
++     case STATS_READ:
++         /* SSL request read */
++         if (count > 0) {
++             if (c->stats_last != STATS_READ) {
++                 gettimeofday(&c->stats_readtime, NULL);
++                 c->stats_readops += 1;
++             }
++             c->stats_readcount += count;
++         }
++         break;
++ #define STATS_WRITE 14
++     case STATS_WRITE:
++         /* SSL response write */
++         if (count > 0) {
++             if (c->stats_last != STATS_WRITE) {
++                 gettimeofday(&c->stats_writetime, NULL);
++                 c->stats_responsetime +=
++                   ((int)(c->stats_writetime.tv_sec-c->stats_readtime.tv_sec))*1000000 +
++                   ((int)(c->stats_writetime.tv_usec-c->stats_readtime.tv_usec));
++                 c->stats_writeops += 1;
++             }
++             c->stats_writecount += count;
++             /* keep-alives active for > 5 minutes trigger stats generation */
++             if (time(NULL) > c->stats_last_time+300) {
++                 /* recurse ! */
++                 collect_stats(c, 0, STATS_FINISH);
++                 collect_stats(c, 0, STATS_INIT);
++             }
++         }
++         break;
++ 
++     default:
++         break;
++     }
++     c->stats_last = statsoperation;
++     return;
++ }
++ 
+  NOEXPORT void client_run(CLI *c) {
+      int err, rst;
+  #ifndef USE_FORK
+***************
+*** 160,169 ****
+--- 264,280 ----
+      c->fds=s_poll_alloc();
+      addrlist_init(&c->connect_addr, 1);
+  
++     /** mnh - stats httpproxyheaders **/
++     collect_stats(c, 0, STATS_INIT); /*** stats ***/
++ 
+          /* try to process the request */
+      err=setjmp(c->err);
+      if(!err)
+          client_try(c);
++ 
++     /** mnh - stats httpproxyheaders **/
++     collect_stats(c, 0, STATS_FINISH); /*** stats ***/
++ 
+      rst=err==1 && c->opt->option.reset;
+      s_log(LOG_NOTICE,
+          "Connection %s: %llu byte(s) sent to SSL, %llu byte(s) sent to socket",
+***************
+*** 543,549 ****
+      do { /* main loop of client data transfer */
+          /****************************** initialize *_wants_* */
+          read_wants_read|=!(SSL_get_shutdown(c->ssl)&SSL_RECEIVED_SHUTDOWN)
+!             && c->ssl_ptr<BUFFSIZE && !read_wants_write;
+          write_wants_write|=!(SSL_get_shutdown(c->ssl)&SSL_SENT_SHUTDOWN)
+              && c->sock_ptr && !write_wants_read;
+  
+--- 654,660 ----
+      do { /* main loop of client data transfer */
+          /****************************** initialize *_wants_* */
+          read_wants_read|=!(SSL_get_shutdown(c->ssl)&SSL_RECEIVED_SHUTDOWN)
+!             && c->ssl_ptr<c->buffsize && !read_wants_write;
+          write_wants_write|=!(SSL_get_shutdown(c->ssl)&SSL_SENT_SHUTDOWN)
+              && c->sock_ptr && !write_wants_read;
+  
+***************
+*** 552,558 ****
+          /* for plain socket open data strem = open file descriptor */
+          /* make sure to add each open socket to receive exceptions! */
+          if(sock_open_rd) /* only poll if the read file descriptor is open */
+!             s_poll_add(c->fds, c->sock_rfd->fd, c->sock_ptr<BUFFSIZE, 0);
+          if(sock_open_wr) /* only poll if the write file descriptor is open */
+              s_poll_add(c->fds, c->sock_wfd->fd, 0, c->ssl_ptr>0);
+          /* poll SSL file descriptors unless SSL shutdown was completed */
+--- 663,669 ----
+          /* for plain socket open data strem = open file descriptor */
+          /* make sure to add each open socket to receive exceptions! */
+          if(sock_open_rd) /* only poll if the read file descriptor is open */
+!             s_poll_add(c->fds, c->sock_rfd->fd, c->sock_ptr<c->buffsize, 0);
+          if(sock_open_wr) /* only poll if the write file descriptor is open */
+              s_poll_add(c->fds, c->sock_wfd->fd, 0, c->ssl_ptr>0);
+          /* poll SSL file descriptors unless SSL shutdown was completed */
+***************
+*** 666,672 ****
+          /****************************** read from socket */
+          if(sock_open_rd && sock_can_rd) {
+              num=readsocket(c->sock_rfd->fd,
+!                 c->sock_buff+c->sock_ptr, BUFFSIZE-c->sock_ptr);
+              switch(num) {
+              case -1:
+                  if(parse_socket_error(c, "readsocket"))
+--- 777,783 ----
+          /****************************** read from socket */
+          if(sock_open_rd && sock_can_rd) {
+              num=readsocket(c->sock_rfd->fd,
+!                 c->sock_buff+c->sock_ptr, c->buffsize-c->sock_ptr);
+              switch(num) {
+              case -1:
+                  if(parse_socket_error(c, "readsocket"))
+***************
+*** 686,692 ****
+          /****************************** update *_wants_* based on new *_ptr */
+          /* this update is also required for SSL_pending() to be used */
+          read_wants_read|=!(SSL_get_shutdown(c->ssl)&SSL_RECEIVED_SHUTDOWN)
+!             && c->ssl_ptr<BUFFSIZE && !read_wants_write;
+          write_wants_write|=!(SSL_get_shutdown(c->ssl)&SSL_SENT_SHUTDOWN)
+              && c->sock_ptr && !write_wants_read;
+  
+--- 797,803 ----
+          /****************************** update *_wants_* based on new *_ptr */
+          /* this update is also required for SSL_pending() to be used */
+          read_wants_read|=!(SSL_get_shutdown(c->ssl)&SSL_RECEIVED_SHUTDOWN)
+!             && c->ssl_ptr<c->buffsize && !read_wants_write;
+          write_wants_write|=!(SSL_get_shutdown(c->ssl)&SSL_SENT_SHUTDOWN)
+              && c->sock_ptr && !write_wants_read;
+  
+***************
+*** 695,701 ****
+--- 806,853 ----
+                  (write_wants_write && ssl_can_wr)) {
+              write_wants_read=0;
+              write_wants_write=0;
++             /** mnh - stats httpproxyheaders **/
++             if (c->opt->option.httpproxyheaders) {
++                 /* look for "Location: http://..." and change to
++                 * "Location:https://..." in-line without using 
++                 * more buffer space.  
++                 * implementation restrictions: (1) we're not changing
++                 * the host/ip or the port number at this time, 
++                 * (2) look specifically for the typical pattern of
++                 * 'Location: http://' generated by tomcat, (3) hope
++                 * there are no 'Locat...' starting a line within data
++                 */
++                 char *cp = c->sock_buff;
++                 char *cpline = c->sock_buff;
++                 char *cplast = cp+c->sock_ptr;
++                 c->crlf_seen=0;
++                 while ((cp < cplast) && (c->crlf_seen < 4)) {
++                     if ((*cp == '\n') || (*cp == '\r')) {
++                         if ((c->crlf_seen == 0) && 
++                             (strncmp(cpline, "Location: http://", 17) == 0)) {
++                             /* change to https: */
++                             char tmp[BUFF_RESERVED];
++                             memcpy((cpline+9),"https",5);
++                             memcpy(tmp, cpline, (size_t)(cp-cpline));
++                             tmp[cp-cpline+1] = 0;
++                             s_log(LOG_DEBUG, "httpproxyheaders: updating Location response header [%s]",tmp);
++                             break;
++                         }
++                         c->crlf_seen++;
++                         cpline = cp+1;
++                     } else {
++                         c->crlf_seen=0;
++                     }
++                     cp++;
++                 }
++                 if (c->crlf_seen == 4) {
++                     /* Location: header not found. implementation */
++                     /* restrction: will not be added at this time */
++                 }
++             }
+              num=SSL_write(c->ssl, c->sock_buff, (int)(c->sock_ptr));
++             /** mnh - stats httpproxyheaders **/
++             collect_stats(c, (int)num, STATS_WRITE); /*** stats ***/
+              switch(err=SSL_get_error(c->ssl, (int)num)) {
+              case SSL_ERROR_NONE:
+                  if(num==0)
+***************
+*** 754,765 ****
+                  (read_wants_write && ssl_can_wr)) {
+              read_wants_read=0;
+              read_wants_write=0;
+!             num=SSL_read(c->ssl, c->ssl_buff+c->ssl_ptr, (int)(BUFFSIZE-c->ssl_ptr));
+              switch(err=SSL_get_error(c->ssl, (int)num)) {
+              case SSL_ERROR_NONE:
+                  if(num==0)
+                      s_log(LOG_DEBUG, "SSL_read returned 0");
+!                 c->ssl_ptr+=(size_t)num;
+                  watchdog=0; /* reset watchdog */
+                  break;
+              case SSL_ERROR_WANT_WRITE:
+--- 906,982 ----
+                  (read_wants_write && ssl_can_wr)) {
+              read_wants_read=0;
+              read_wants_write=0;
+!             num=SSL_read(c->ssl, c->ssl_buff+c->ssl_ptr, (int)(c->buffsize-c->ssl_ptr));
+!             collect_stats(c, (int)num, STATS_READ); /** mnh - stats httpproxyheaders **/
+              switch(err=SSL_get_error(c->ssl, (int)num)) {
+              case SSL_ERROR_NONE:
+                  if(num==0)
+                      s_log(LOG_DEBUG, "SSL_read returned 0");
+!                 /** mnh - stats httpproxyheaders **/
+!                 if (c->buffsize != BUFFSIZE && c->opt->option.httpproxyheaders) { /* some work left to do */
+!                     unsigned long last = c->ssl_ptr;
+!                     c->ssl_ptr += (size_t)num;
+! 
+!                     /* Look for end of HTTP headers between last and ssl_ptr.
+!                     * To achieve this reliably, we have to count the number of
+!                     * successive [CR]LF and to memorize it in case it's spread
+!                     * over multiple segments. --WT.
+!                     */
+!                     while (last < c->ssl_ptr) {
+!                         if (c->ssl_buff[last] == '\n') {
+!                             if (++c->crlf_seen == 2)
+!                                 break;
+!                         } else if (last < c->ssl_ptr - 1 &&
+!                                     c->ssl_buff[last] == '\r' &&
+!                                     c->ssl_buff[last+1] == '\n') {
+!                             if (++c->crlf_seen == 2)
+!                                 break;
+!                             last++;
+!                         } else if (c->ssl_buff[last] != '\r')
+!                             /* don't refuse '\r' because we may get a '\n' on next read */
+!                             c->crlf_seen = 0;
+!                         last++;
+!                     }
+!                     if (c->crlf_seen >= 2) {
+!                         /* X-Forwarded-For: xxxx \r\n\0 */
+!                         char xforw[17 + IPLEN + 3];
+! 
+!                         /* We have all the HTTP headers now. We don't need to
+!                         * reserve any space anymore. <ssl_ptr> points to the
+!                         * first byte of unread data, and <last> points to the
+!                         * exact location where we want to insert our headers,
+!                         * which is right before the empty line.
+!                         */
+!                         c->buffsize = BUFFSIZE;
+! 
+!                         /* We will insert our X-Forwarded-For: header here.
+!                         * We need to write the IP address, but if we use
+!                         * sprintf, it will pad with the terminating 0.
+!                         * So we will pass via a temporary buffer allocated
+!                         * on the stack.
+!                         */
+!                         memcpy(xforw, "X-Forwarded-For: ", 17);
+!                         if (getnameinfo(&c->peer_addr.sa,
+!                                 c->peer_addr_len,
+!                                 xforw + 17, IPLEN, NULL, 0,
+!                                 NI_NUMERICHOST) == 0) {
+!                             strcat(xforw + 17, "\r\n");
+!                             buffer_insert(c->ssl_buff, &last, &c->ssl_ptr,
+!                                         c->buffsize, xforw);
+!                             s_log(LOG_DEBUG, "httpproxyheaders: adding HTTP request header '%s'",xforw);
+!                         }
+!                         memcpy(xforw, "X-Forwarded-Proto: https\r\n", 27);
+!                         buffer_insert(c->ssl_buff, &last, &c->ssl_ptr,
+!                                     c->buffsize, xforw);
+!                         s_log(LOG_DEBUG, "httpproxyheaders: adding HTTP request header '%s'",xforw);
+!                         /* last still points to the \r\n and ssl_ptr to the
+!                         * end of the buffer, so we may add as many headers
+!                         * as wee need to.
+!                         */
+!                     }
+!                 }
+!                 else
+!                    c->ssl_ptr+=(size_t)num;
+                  watchdog=0; /* reset watchdog */
+                  break;
+              case SSL_ERROR_WANT_WRITE:
+*** stunnel-5.14/src/options.c	2015-03-25 06:10:58.000000000 -0700
+--- stunnel-5.14-mnh/src/options.c	2015-03-31 11:11:39.103373233 -0700
+***************
+*** 983,988 ****
+--- 983,1013 ----
+          break;
+      }
+  
++     /* mnh - stats httpproxyheaders */
++     switch(cmd) {
++     case CMD_BEGIN:
++         new_global_options.option.stats=0;
++         break;
++     case CMD_EXEC:
++         if(strcasecmp(opt, "stats"))
++             break;
++         if(!strcasecmp(arg, "yes"))
++             new_global_options.option.stats=1;
++         else if(!strcasecmp(arg, "no"))
++             new_global_options.option.stats=0;
++         else
++             return "argument should be either 'yes' or 'no'";
++         return NULL; /* OK */
++     case CMD_DEFAULT:
++     case CMD_END:
++     case CMD_FREE:
++         break;
++     case CMD_HELP:
++         s_log(LOG_NOTICE, "%-15s = yes|no log packet count and response time statistics",
++             "stats");
++         break;
++     }
++ 
+      /* syslog */
+  #ifndef USE_WIN32
+      switch(cmd) {
+***************
+*** 1468,1473 ****
+--- 1493,1523 ----
+  
+  #endif /* !defined(OPENSSL_NO_ENGINE) */
+  
++     /* mnh - stats httpproxyheaders */
++     switch(cmd) {
++     case CMD_BEGIN:
++         section->option.httpproxyheaders=0;
++         break;
++     case CMD_EXEC:
++         if(strcasecmp(opt, "httpproxyheaders"))
++             break;
++         if(!strcasecmp(arg, "yes"))
++             section->option.httpproxyheaders=1;
++         else if(!strcasecmp(arg, "no"))
++             section->option.httpproxyheaders=0;
++         else
++             return "argument should be either 'yes' or 'no'";
++         return NULL; /* OK */
++     case CMD_DEFAULT:
++     case CMD_END:
++     case CMD_FREE:
++         break;
++     case CMD_HELP:
++         s_log(LOG_NOTICE, "%-15s = yes|no generate HTTP X-Forwarded-For and X-FOrwarded-Proto headers on request and alter Location header on response",
++             "httpproxyheaders");
++         break;
++     }
++ 
+      /* exec */
+      switch(cmd) {
+      case CMD_BEGIN:
+*** stunnel-5.14/src/common.h	2015-03-25 07:59:11.000000000 -0700
+--- stunnel-5.14-mnh/src/common.h	2015-03-31 11:14:11.231368470 -0700
+***************
+*** 51,56 ****
+--- 51,63 ----
+  /* I/O buffer size: 18432 (0x4800) is the maximum size of SSL record payload */
+  #define BUFFSIZE 18432
+  
++ /** mnh - stats httpproxyheaders **/
++ /* maximum space reserved for header insertion in BUFFSIZE */
++ #define BUFF_RESERVED 1024
++ 
++ /* IP address and TCP port textual representation length */
++ #define IPLEN 128
++ 
+  /* how many bytes of random input to read from files for PRNG */
+  /* OpenSSL likes at least 128 bits, so 64 bytes seems plenty. */
+  #define RANDOM_BYTES 64
+*** stunnel-5.14/doc/stunnel.8	2015-03-20 03:17:00.000000000 -0700
+--- stunnel-5.14-mnh/doc/stunnel.8	2015-03-31 11:16:37.335363896 -0700
+***************
+*** 358,363 ****
+--- 358,373 ----
+  \&    socket = a:SO_BINDTODEVICE=lo
+  \&        only accept connections on loopback interface
+  .Ve
++ .IP "\fBstats\fR = yes | no " 4
++ .IX Item "stats= yes | no"
++ log packet count and response time statistics at the current log level.
++ statistic records have the format:
++ .Sp
++ \fBSTATS >\fR \fInnn\fR \fB# <\fR \fInnn\fR \fB# >\fR \fInnn\fR \fBb <\fR \fInnn\fR \fBb ><\fR \fInnn\fR \fBusec\fR
++ .Sp
++ where \fInnn\fR is the statistic in units of \fBb\fR byte, \fB#\fR count or \fBusec\fR microseconds for \fB>\fR reading from client, \fB<\fR responding to client or \fB><\fR round-trip response time.
++ .Sp
++ default: no
+  .IP "\fBsyslog\fR = yes | no (Unix only)" 4
+  .IX Item "syslog = yes | no (Unix only)"
+  enable logging via syslog
+***************
+*** 547,552 ****
+--- 557,569 ----
+  .Ve
+  .Sp
+  default: rr
++ .IP "\fBhttpproxyheaders\fR = \s-1yes | no\s0" 4
++ .IX Item "httpproxyheaders = yes | no"
++ assume packet content is HTTP and generate appropriate request
++ headers and modify response headers according the HTTP proxy RFCs.
++ Required for correct tomcat webapp and Java EE application operation.
++ .Sp
++ default: no
+  .IP "\fBident\fR = \s-1USERNAME\s0" 4
+  .IX Item "ident = USERNAME"
+  use \s-1IDENT \s0(\s-1RFC 1413\s0) username checking
